@@ -1,0 +1,27 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* чтобы MUI поля выглядели аккуратно */
+.form :global(.MuiTextField-root) {
+  width: 100%;
+}
+
+/* кнопка чуть красивее */
+.form :global(.MuiButton-root) {
+  padding: 10px 0;
+  font-weight: 600;
+  text-transform: none;
+  border-radius: 10px;
+}
+
+/* success text */
+.success {
+  margin-top: 10px;
+  text-align: center;
+  font-weight: 500;
+}
