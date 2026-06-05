@@ -1,8 +1,9 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useState } from 'react';
 import AuthFormWrapper from '../../utils/AuthFormWrapper';
-import styles from './Login.module.css';
 import { Button, TextField, Typography } from '@mui/material';
+import styles from './Login.module.css';
+import { axiosBase } from '../../api/axiosBase';
 
 interface LoginFormData {
   email: string;
@@ -19,13 +20,19 @@ const Login = () => {
 
   const [success, setSuccess] = useState(false);
 
-  const onSubmit: SubmitHandler<LoginFormData> = (data) => {
-    console.log('LOGIN DATA:', data);
+  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
+    try {
+      const res = await axiosBase.post('/login', data);
 
-    setSuccess(true);
-    reset();
+      console.log('LOGIN RESPONSE:', res.data);
 
-    setTimeout(() => setSuccess(false), 2000);
+      setSuccess(true);
+      reset();
+
+      setTimeout(() => setSuccess(false), 2000);
+    } catch (err) {
+      console.log('LOGIN ERROR:', err);
+    }
   };
 
   return (

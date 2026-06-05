@@ -1,8 +1,10 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AuthFormWrapper from '../../utils/AuthFormWrapper';
 import styles from './Register.module.css';
 import { Button, TextField, Typography } from '@mui/material';
+import { axiosBase } from '../../api/axiosBase';
 
 interface RegisterFormData {
   username: string;
@@ -19,14 +21,28 @@ const Register = () => {
   } = useForm<RegisterFormData>();
 
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<RegisterFormData> = (data) => {
-    console.log('REGISTER DATA:', data);
+  const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
+    try {
+      const res = await axiosBase.post('/register', data);
 
-    setSuccess(true);
-    reset();
+      console.log('RESPONSE:', res.data);
 
-    setTimeout(() => setSuccess(false), 2000);
+      if (res.data.success) {
+        setSuccess(true);
+        reset();
+
+        setTimeout(() => {
+          setSuccess(false);
+
+          // 🔥 переход на страницу пользователей
+          navigate('/users');
+        }, 500);
+      }
+    } catch (err) {
+      console.log('ERROR:', err);
+    }
   };
 
   return (
@@ -44,7 +60,13 @@ const Register = () => {
 
         <TextField
           label="Email"
-          {...register('email', { required: 'Email is required.' })}
+          {...register('email', {
+            required: 'Email is required.',
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: 'Invalid email format',
+            },
+          })}
           error={!!errors.email}
           helperText={errors.email?.message}
         />
@@ -66,7 +88,7 @@ const Register = () => {
 
         {success && (
           <Typography color="success.main" sx={{ mt: 2 }}>
-            Register success (static)
+            Register success 🎉
           </Typography>
         )}
       </form>
