@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: number;
@@ -8,33 +9,25 @@ interface User {
 
 const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
-
-  const fetchUsers = useCallback(async () => {
-    try {
-      const response = await fetch('http://localhost:5000/users');
-
-      if (!response.ok) {
-        throw new Error('Ошибка запроса');
-      }
-
-      const data: User[] = await response.json();
-      setUsers(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    fetch('http://localhost:5000/users')
+      .then((r) => r.json())
+      .then(setUsers);
+  }, []);
 
   return (
-    <div style={{ padding: 20 }}>
+    <div>
       <h2>Users</h2>
 
       {users.map((user) => (
-        <div key={user.id}>
-          {user.username} — {user.email}
+        <div
+          key={user.id}
+          onClick={() => navigate(`/deeds/${user.id}`)}
+          style={{ cursor: 'pointer' }}
+        >
+          {user.username}
         </div>
       ))}
     </div>

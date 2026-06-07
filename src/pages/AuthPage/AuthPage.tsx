@@ -16,16 +16,17 @@ const AuthPage = () => {
         alignItems: 'center',
         flexDirection: 'column',
         gap: 2,
+        height: '100vh',
       }}
     >
       {isRegister ? <Register /> : <Login />}
 
-      <Button variant="text" onClick={() => setIsRegister((prev) => !prev)}>
-        {isRegister ? 'Already have account? Login' : 'No account? Register'}
+      <Button onClick={() => setIsRegister((p) => !p)}>
+        {isRegister ? 'Go Login' : 'Go Register'}
       </Button>
 
-      <Button variant="contained" onClick={() => navigate('/users')} sx={{ mt: 2 }}>
-        Go to Users
+      <Button variant="outlined" onClick={() => navigate('/deeds')}>
+        Go to Deeds
       </Button>
     </Grid>
   );
