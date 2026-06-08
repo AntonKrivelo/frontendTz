@@ -15,7 +15,7 @@ const DeedsPage = () => {
   const userId = localStorage.getItem('userId');
 
   const fetchDeeds = async () => {
-    const res = await axiosBase.get(`/deeds?userId=${userId}`);
+    const res = await axiosBase.get(`/deeds/${userId}`);
     setDeeds(res.data);
   };
 

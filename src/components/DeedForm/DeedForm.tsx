@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { Button, TextField } from '@mui/material';
 
-const DeedForm = ({ onCreate }: any) => {
+interface DeedFormProps {
+  onCreate: (value: string) => Promise<void> | void;
+}
+
+const DeedForm = ({ onCreate }: DeedFormProps) => {
   const [value, setValue] = useState('');
 
-  const submit = async (e: any) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!value) return;
+
+    if (!value.trim()) return;
 
     await onCreate(value);
     setValue('');
@@ -17,7 +22,7 @@ const DeedForm = ({ onCreate }: any) => {
       <TextField
         fullWidth
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
         label="Новое дело"
       />
 
