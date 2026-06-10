@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { axiosBase } from '../../api/axiosBase';
 import DeedForm from '../../components/DeedForm/DeedForm';
 import { Checkbox, Button } from '@mui/material';
@@ -11,8 +12,12 @@ interface Deed {
 
 const DeedsPage = () => {
   const [deeds, setDeeds] = useState<Deed[]>([]);
+  const [searchParams] = useSearchParams();
 
-  const userId = localStorage.getItem('userId');
+  const viewUserId = searchParams.get('userId');
+  const myUserId = localStorage.getItem('userId');
+  const userId = viewUserId ?? myUserId;
+  const isReadOnly = viewUserId !== null && viewUserId !== myUserId;
 
   const fetchDeeds = async () => {
     const res = await axiosBase.get(`/deeds/${userId}`);
@@ -21,22 +26,15 @@ const DeedsPage = () => {
 
   useEffect(() => {
     fetchDeeds();
-  }, []);
+  }, [userId]);
 
   const createDeed = async (title: string) => {
-    await axiosBase.post('/deeds', {
-      userId,
-      title,
-    });
-
+    await axiosBase.post('/deeds', { userId, title });
     fetchDeeds();
   };
 
   const toggle = async (deed: Deed) => {
-    await axiosBase.put(`/deeds/${deed.id}`, {
-      done: !deed.done,
-    });
-
+    await axiosBase.put(`/deeds/${deed.id}`, { done: !deed.done });
     fetchDeeds();
   };
 
@@ -46,10 +44,10 @@ const DeedsPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto' }}>
-      <h2>Мои добрые дела</h2>
+    <div style={{ maxWidth: 600, margin: '0 auto', padding: 16 }}>
+      <h2>{isReadOnly ? "Friend's good deeds" : 'My good deeds'}</h2>
 
-      <DeedForm onCreate={createDeed} />
+      {!isReadOnly && <DeedForm onCreate={createDeed} />}
 
       {deeds.map((d) => (
         <div
@@ -62,13 +60,19 @@ const DeedsPage = () => {
             borderBottom: '1px solid #ddd',
           }}
         >
-          <Checkbox checked={d.done} onChange={() => toggle(d)} />
-
-          <span style={{ flex: 1 }}>{d.title}</span>
-
-          <Button color="error" onClick={() => remove(d.id)}>
-            delete
-          </Button>
+          <Checkbox
+            checked={d.done}
+            onChange={() => !isReadOnly && toggle(d)}
+            disabled={isReadOnly}
+          />
+          <span style={{ flex: 1, textDecoration: d.done ? 'line-through' : 'none' }}>
+            {d.title}
+          </span>
+          {!isReadOnly && (
+            <Button color="error" onClick={() => remove(d.id)}>
+              delete
+            </Button>
+          )}
         </div>
       ))}
     </div>

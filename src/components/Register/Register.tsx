@@ -12,20 +12,19 @@ interface Form {
 
 const Register = () => {
   const { register, handleSubmit, reset } = useForm<Form>();
-  const [success, setSuccess] = useState(false);
+  const [userTag, setUserTag] = useState('');
   const navigate = useNavigate();
 
   const onSubmit = async (data: Form) => {
     const res = await axiosBase.post('/register', data);
-
     if (res.data.success) {
-      setSuccess(true);
+      localStorage.setItem('userId', String(res.data.user.id));
+      localStorage.setItem('username', res.data.user.username);
+      localStorage.setItem('userTag', res.data.user.tag ?? '');
+      localStorage.setItem('userEmail', res.data.user.email);
+      setUserTag(res.data.user.tag);
       reset();
-
-      setTimeout(() => {
-        setSuccess(false);
-        navigate('/deeds');
-      }, 500);
+      setTimeout(() => navigate('/deeds'), 1500);
     }
   };
 
@@ -34,12 +33,14 @@ const Register = () => {
       <TextField label="Username" {...register('username')} fullWidth />
       <TextField label="Email" {...register('email')} fullWidth />
       <TextField label="Password" type="password" {...register('password')} fullWidth />
-
       <Button type="submit" variant="contained" sx={{ mt: 2 }}>
         Register
       </Button>
-
-      {success && <Typography color="green">Success</Typography>}
+      {userTag && (
+        <Typography color="green" sx={{ mt: 1 }}>
+          Registered! Your tag: @{userTag}
+        </Typography>
+      )}
     </form>
   );
 };
