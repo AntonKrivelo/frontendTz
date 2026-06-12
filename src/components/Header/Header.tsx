@@ -29,6 +29,9 @@ const Header = () => {
           <Button color="inherit" onClick={() => navigate('/deeds')}>
             My Deeds
           </Button>
+          <Button color="inherit" onClick={() => navigate('/users')}>
+            Page to Users
+          </Button>
           <Button color="inherit" onClick={() => navigate('/friends')}>
             Friends
           </Button>

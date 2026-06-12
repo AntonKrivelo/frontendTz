@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosBase } from '../../api/axiosBase';
-import {
-  Box, Button, Divider, TextField, Typography, Alert,
-} from '@mui/material';
+import { Box, Button, Divider, TextField, Typography, Alert } from '@mui/material';
 
 interface Friend {
   id: number;
